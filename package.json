@@ -1,6 +1,6 @@
 {
   "name": "react-tanstack-virtual-table",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A lightweight virtualized table built with TanStack Table + TanStack Virtual for React",
   "repository": {
     "type": "git",
