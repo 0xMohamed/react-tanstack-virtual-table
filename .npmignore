@@ -1,0 +1,34 @@
+# Node modules
+node_modules/
+
+# Build cache
+dist/.cache/
+.vite/
+.cache/
+*.log
+
+# Source files
+src/
+*.ts
+*.tsx
+
+# Storybook files
+.storybook/
+stories/
+
+# Tests
+*.test.ts
+*.test.tsx
+__tests__/
+
+# Configs
+tsconfig.json
+vite.config.ts
+*.config.js
+
+# Git files
+.git/
+.gitignore
+
+# Environment variables
+.env
