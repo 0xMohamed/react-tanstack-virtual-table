@@ -60,5 +60,14 @@
     "typescript-eslint": "^8.46.3",
     "vite": "^7.2.2"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Seoudy",
+  "keywords": [
+    "react",
+    "table",
+    "virtual",
+    "tanstack",
+    "tanstack-table",
+    "tanstack-virtual"
+  ]
 }
