@@ -1,15 +1,24 @@
 {
   "name": "react-tanstack-virtual-table",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A lightweight virtualized table built with TanStack Table + TanStack Virtual for React",
   "private": false,
   "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "eslint .",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
@@ -40,5 +49,6 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.3",
     "vite": "^7.2.2"
-  }
+  },
+  "license": "MIT"
 }

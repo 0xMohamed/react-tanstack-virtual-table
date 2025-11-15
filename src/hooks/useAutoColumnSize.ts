@@ -57,7 +57,9 @@ export function useAutoColumnSize<TData extends RowData>({
             getValue: () => (row as any)[accessorKey],
             row: { original: row },
           } as any);
-          return typeof cellValue === "string" ? cellValue : String(cellValue || "");
+          return typeof cellValue === "string"
+            ? cellValue
+            : String(cellValue || "");
         }
         return "";
       });
@@ -73,10 +75,10 @@ export function useAutoColumnSize<TData extends RowData>({
       measurementCacheRef.current.set(cacheKey, width);
 
       // Update column sizing using TanStack Table API
-      const column = table.getColumn(columnId);
-      if (column) {
-        column.setSize(width);
-      }
+      table.setColumnSizing((old) => ({
+        ...old,
+        [columnId]: width,
+      }));
 
       isMeasuringRef.current = false;
     },
@@ -95,10 +97,9 @@ export function useAutoColumnSize<TData extends RowData>({
   }, [enabled, table, measureColumn]);
 
   // Debounced measure function
-  const debouncedMeasure = useCallback(
-    debounce(measureAllColumns, 100),
-    [measureAllColumns]
-  );
+  const debouncedMeasure = useCallback(debounce(measureAllColumns, 100), [
+    measureAllColumns,
+  ]);
 
   // Measure columns when data or columns change
   useEffect(() => {
@@ -134,4 +135,3 @@ export function useAutoColumnSize<TData extends RowData>({
     measureAllColumns,
   };
 }
-

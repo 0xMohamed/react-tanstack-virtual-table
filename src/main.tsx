@@ -96,6 +96,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       columns={columns}
       height={600}
       readonly={false}
+      autoFitColumnWidth={true}
       onCellEdit={(rowIndex, columnId, value) =>
         console.log(rowIndex, columnId, value)
       }
