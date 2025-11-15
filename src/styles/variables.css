@@ -1,0 +1,44 @@
+/* CSS Variables for Virtual Table Theming */
+
+/* Light Theme (Default) */
+.vt-container[data-theme="light"],
+.vt-container {
+  --vt-bg: #ffffff;
+  --vt-bg-header: #f7f7f9;
+  --vt-bg-active-row: rgba(0, 120, 255, 0.1);
+  --vt-bg-active-column: rgba(0, 120, 255, 0.15);
+  --vt-bg-active-cell: #ebebed;
+  --vt-border: #e7e7e9;
+  --vt-border-focus: #1a42e8;
+  --vt-text: #000000;
+  --vt-text-secondary: #666666;
+  --vt-radius: 4px;
+  --vt-header-height: auto;
+  --vt-row-height: 40px;
+  --vt-row-header-width: 60px;
+  --vt-padding-cell: 6px;
+  --vt-padding-header: 8px;
+  --vt-shadow-focus: 0 0 0 1px #1a42e8;
+  --vt-transition: 150ms ease;
+}
+
+/* Dark Theme */
+.vt-container[data-theme="dark"] {
+  --vt-bg: #1a1a1a;
+  --vt-bg-header: #2a2a2a;
+  --vt-bg-active-row: rgba(100, 150, 255, 0.15);
+  --vt-bg-active-column: rgba(100, 150, 255, 0.2);
+  --vt-bg-active-cell: #3a3a3a;
+  --vt-border: #404040;
+  --vt-border-focus: #4a9eff;
+  --vt-text: #ffffff;
+  --vt-text-secondary: #aaaaaa;
+  --vt-radius: 4px;
+  --vt-header-height: auto;
+  --vt-row-height: 40px;
+  --vt-row-header-width: 60px;
+  --vt-padding-cell: 6px;
+  --vt-padding-header: 8px;
+  --vt-shadow-focus: 0 0 0 1px #4a9eff;
+  --vt-transition: 150ms ease;
+}

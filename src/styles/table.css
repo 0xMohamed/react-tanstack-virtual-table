@@ -1,0 +1,128 @@
+/* Base Virtual Table Styles */
+
+.vt-container {
+  position: relative;
+  overflow: auto;
+  background: var(--vt-bg);
+  border: 1px solid var(--vt-border);
+  color: var(--vt-text);
+  font-family: arial, sans-serif;
+  outline: none;
+}
+
+.vt-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+  display: grid;
+}
+
+/* Header Styles */
+.vt-thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--vt-bg-header);
+}
+
+.vt-tr {
+  display: flex;
+  width: 100%;
+}
+
+.vt-th {
+  display: flex;
+  align-items: center;
+  padding: var(--vt-padding-header);
+  box-sizing: border-box;
+  text-align: left;
+  border-bottom: 1px solid var(--vt-border);
+  border-right: 1px solid var(--vt-border);
+  background: var(--vt-bg-header);
+  transition: background var(--vt-transition);
+}
+
+.vt-th--row-header {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  text-align: center;
+  background: var(--vt-bg-header);
+}
+
+.vt-th--sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.vt-th--active,
+.vt-td--row-header-active {
+  background: var(--vt-bg-active-cell) !important;
+}
+
+/* Body Styles */
+.vt-tbody {
+  display: grid;
+  position: relative;
+}
+
+.vt-tr--virtual {
+  display: flex;
+  position: absolute;
+  width: 100%;
+}
+
+.vt-td {
+  display: flex;
+  padding: var(--vt-padding-cell);
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--vt-border);
+  border-right: 1px solid var(--vt-border);
+  text-align: left;
+  overflow: hidden;
+  position: relative;
+}
+
+.vt-td--row-header {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background: var(--vt-bg-header);
+}
+
+/* Editable Cell Styles */
+.vt-cell-editable {
+  all: unset;
+  width: 100%;
+  resize: none;
+  position: absolute;
+  inset: 0;
+  border: none;
+  outline: 1px solid var(--vt-border);
+  padding: var(--vt-padding-cell);
+  box-sizing: border-box;
+}
+
+/* Selected Cell */
+.vt-cell-selected {
+  outline: 2px solid var(--vt-border-focus);
+  outline-offset: -2px;
+}
+
+/* Focus Ring Overlay */
+.vt-focus-ring {
+  position: absolute;
+  pointer-events: none;
+  box-shadow: var(--vt-shadow-focus);
+  opacity: 0;
+  transition: opacity var(--vt-transition);
+  z-index: 10;
+}
+
+.vt-focus-ring--visible {
+  opacity: 1;
+}
