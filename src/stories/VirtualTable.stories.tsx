@@ -256,7 +256,7 @@ export const AutoColumnSizing: Story = {
     autoFitOptions: {
       minWidth: 80,
       maxWidth: 400,
-      padding: 16,
+      padding: 32,
     },
   },
   parameters: {
@@ -502,9 +502,9 @@ export const AllFeatures: Story = {
         onCellValueChange={handleCellEdit}
         autoFitColumnWidth={true}
         autoFitOptions={{
-          minWidth: 100,
-          maxWidth: 300,
-          padding: 16,
+          minWidth: 120,
+          maxWidth: 400,
+          padding: 32,
         }}
         theme="light"
       />
