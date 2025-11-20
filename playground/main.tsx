@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { VirtualTable } from "./core/VirtualTable";
+import { VirtualTable } from "../src/core/VirtualTable";
 
 type Person = { name: string; age: number };
 const data: Person[] = Array.from({ length: 1000 }, (_, i) => ({

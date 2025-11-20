@@ -1,4 +1,3 @@
-import React from "react";
 import { flexRender, HeaderGroup, RowData } from "@tanstack/react-table";
 import { EditableCell, SelectedCell } from "../hooks/useEditableCell";
 
@@ -43,7 +42,10 @@ export function TableHeader<TData extends RowData>({
                 onClick={header.column.getToggleSortingHandler()}
               >
                 <div>
-                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
                   {{
                     asc: " 🔼",
                     desc: " 🔽",
@@ -57,4 +59,3 @@ export function TableHeader<TData extends RowData>({
     </thead>
   );
 }
-

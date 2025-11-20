@@ -3,21 +3,19 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
+  // Vite is only used for the dev server (playground)
+  // Library builds are handled by tsup (see tsup.config.ts)
+  root: "playground",
+
   plugins: [react()],
-  build: {
-    lib: {
-      entry: path.resolve(__dirname, "src/index.ts"),
-      name: "ReactTanstackVirtualTable",
-      fileName: (format) => `react-tanstack-virtual-table.${format}.js`,
+
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
     },
-    rollupOptions: {
-      external: ["react", "react-dom"],
-      output: {
-        globals: {
-          react: "React",
-          "react-dom": "ReactDOM",
-        },
-      },
-    },
+  },
+
+  server: {
+    port: 5173,
   },
 });

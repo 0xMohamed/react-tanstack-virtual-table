@@ -13,6 +13,6 @@
     "allowSyntheticDefaultImports": true
   },
 
-  "include": ["src"],
+  "include": ["src", "playground/main.tsx"],
   "exclude": ["node_modules", "dist"]
 }
