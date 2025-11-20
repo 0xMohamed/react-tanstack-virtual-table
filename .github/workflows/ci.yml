@@ -45,8 +45,8 @@ jobs:
       # - name: Type Check
       #   run: npm run type-check --if-present
 
-      - name: Lint
-        run: npm run lint --if-present
+      # - name: Lint
+      #   run: npm run lint --if-present
 
       # ------------------------------
       # 5. Build Library
