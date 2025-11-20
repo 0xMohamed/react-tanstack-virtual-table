@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { flexRender, Cell, RowData } from "@tanstack/react-table";
 
 interface TableCellProps<TData extends RowData> {
@@ -13,7 +13,9 @@ interface TableCellProps<TData extends RowData> {
   editableCellElementRef: React.MutableRefObject<HTMLTableCellElement | null>;
   onClick: () => void;
   onDoubleClick: () => void;
-  onCellEdit: (value: string) => void;
+
+  /** THIS MUST FIRE ON COMMIT (after edit), not every key */
+  commitCellEdit: (value: string) => void;
 }
 
 export function TableCell<TData extends RowData>({
@@ -28,8 +30,57 @@ export function TableCell<TData extends RowData>({
   editableCellElementRef,
   onClick,
   onDoubleClick,
-  onCellEdit,
+  commitCellEdit,
 }: TableCellProps<TData>) {
+  const cellRef = useRef<HTMLTextAreaElement>(null);
+
+  const originalValue = String(cell.getValue() ?? "");
+  const [localValue, setLocalValue] = useState(originalValue);
+
+  // When cell enters edit mode → initialize localValue
+  useEffect(() => {
+    if (isActiveEditable) {
+      setLocalValue(originalValue);
+    }
+  }, [isActiveEditable, originalValue]);
+
+  // Commit (Handsontable: blur / enter)
+  const commitEdit = useCallback(() => {
+    if (localValue !== originalValue) {
+      commitCellEdit(localValue);
+    }
+  }, [commitCellEdit, localValue, originalValue]);
+
+  // Cancel edit (ESC)
+  const cancelEdit = () => {
+    setLocalValue(originalValue);
+  };
+
+  // Keyboard handling (Enter / Escape)
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      commitEdit();
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      cancelEdit();
+    }
+  };
+
+  useEffect(() => {
+    if (!isActiveEditable) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!cellRef.current?.contains(e.target as Node)) {
+        commitEdit();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isActiveEditable, localValue, commitEdit]);
+
   const cellClasses = [
     "vt-td",
     isRowHeader && "vt-td--row-header",
@@ -43,12 +94,8 @@ export function TableCell<TData extends RowData>({
     <td
       key={cell.id}
       ref={(node) => {
-        if (isSelected) {
-          selectedCellElementRef.current = node;
-        }
-        if (isActiveEditable) {
-          editableCellElementRef.current = node;
-        }
+        if (isSelected) selectedCellElementRef.current = node;
+        if (isActiveEditable) editableCellElementRef.current = node;
       }}
       className={cellClasses}
       style={{
@@ -62,11 +109,11 @@ export function TableCell<TData extends RowData>({
       ) : isActiveEditable ? (
         <textarea
           className="vt-cell-editable"
-          value={String(cell.getValue() ?? "")}
-          onChange={(e) => onCellEdit(e.target.value)}
-          style={{
-            height: `${virtualRowSize}px`,
-          }}
+          value={localValue}
+          onChange={(e) => setLocalValue(e.target.value)} // LOCAL ONLY
+          onBlur={commitEdit} // COMMIT ON BLUR
+          onKeyDown={handleKeyDown} // ENTER / ESC
+          style={{ height: `${virtualRowSize}px` }}
           autoFocus
         />
       ) : (

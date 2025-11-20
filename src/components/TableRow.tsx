@@ -22,7 +22,7 @@ interface TableRowProps<TData extends RowData> {
     columnId: string,
     isRowHeader: boolean
   ) => void;
-  onCellEdit: (rowIndex: number, columnId: string, value: string) => void;
+  commitCellEdit: (rowIndex: number, columnId: string, value: string) => void;
   measureElement: (node: HTMLTableRowElement | null) => void;
 }
 
@@ -36,7 +36,7 @@ export function TableRow<TData extends RowData>({
   editableCellElementRef,
   onCellClick,
   onCellDoubleClick,
-  onCellEdit,
+  commitCellEdit,
   measureElement,
 }: TableRowProps<TData>) {
   return (
@@ -79,8 +79,8 @@ export function TableRow<TData extends RowData>({
             onDoubleClick={() => {
               onCellDoubleClick(virtualRow.index, cell.column.id, isRowHeader);
             }}
-            onCellEdit={(value) => {
-              onCellEdit(virtualRow.index, cell.column.id, value);
+            commitCellEdit={(value) => {
+              commitCellEdit(virtualRow.index, cell.column.id, value);
             }}
           />
         );

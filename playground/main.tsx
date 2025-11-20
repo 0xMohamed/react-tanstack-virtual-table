@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import { VirtualTable } from "../src/core/VirtualTable";
 
 type Person = { name: string; age: number };
-const data: Person[] = Array.from({ length: 1000 }, (_, i) => ({
+
+const initialData: Person[] = Array.from({ length: 1000 }, (_, i) => ({
   name: `User ${i + 1}`,
   age: 20 + (i % 50),
   gender: i % 2 === 0 ? "Male" : "Female",
@@ -23,83 +24,53 @@ const data: Person[] = Array.from({ length: 1000 }, (_, i) => ({
 }));
 
 const columns = [
-  {
-    header: "Name",
-    accessorKey: "name",
-  },
-  {
-    header: "Age",
-    accessorKey: "age",
-  },
-  {
-    header: "Email",
-    accessorKey: "email",
-  },
-  {
-    header: "Address",
-    accessorKey: "address",
-  },
-  {
-    header: "Phone",
-    accessorKey: "phone",
-  },
-  {
-    header: "Created At",
-    accessorKey: "createdAt",
-  },
-  {
-    header: "Updated At",
-    accessorKey: "updatedAt",
-  },
-  {
-    header: "City",
-    accessorKey: "city",
-  },
-  {
-    header: "State",
-    accessorKey: "state",
-  },
-  {
-    header: "Zip",
-    accessorKey: "zip",
-  },
-  {
-    header: "Gender",
-    accessorKey: "gender",
-  },
-  {
-    header: "Birth Date",
-    accessorKey: "birthDate",
-  },
-  {
-    header: "Nationality",
-    accessorKey: "nationality",
-  },
-  {
-    header: "Occupation",
-    accessorKey: "occupation",
-  },
-  {
-    header: "Company",
-    accessorKey: "company",
-  },
-  {
-    header: "Company Website",
-    accessorKey: "companyWebsite",
-  },
+  { header: "Name", accessorKey: "name" },
+  { header: "Age", accessorKey: "age" },
+  { header: "Email", accessorKey: "email" },
+  { header: "Address", accessorKey: "address" },
+  { header: "Phone", accessorKey: "phone" },
+  { header: "Created At", accessorKey: "createdAt" },
+  { header: "Updated At", accessorKey: "updatedAt" },
+  { header: "City", accessorKey: "city" },
+  { header: "State", accessorKey: "state" },
+  { header: "Zip", accessorKey: "zip" },
+  { header: "Gender", accessorKey: "gender" },
+  { header: "Birth Date", accessorKey: "birthDate" },
+  { header: "Nationality", accessorKey: "nationality" },
+  { header: "Occupation", accessorKey: "occupation" },
+  { header: "Company", accessorKey: "company" },
+  { header: "Company Website", accessorKey: "companyWebsite" },
 ];
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+function App() {
+  const [tableData, setTableData] = useState(initialData);
+
+  console.log("rerender");
+
+  const handleCellEdit = (rowIndex: number, columnId: string, value: any) => {
+    setTableData((prev) => {
+      const updated = [...prev];
+      updated[rowIndex] = { ...updated[rowIndex], [columnId]: value };
+      return updated;
+    });
+
+    console.log("Edited:", { rowIndex, columnId, value });
+  };
+
+  return (
     <VirtualTable
-      data={data}
+      data={tableData}
       columns={columns}
       height={600}
       readonly={false}
       autoFitColumnWidth={true}
-      onCellEdit={(rowIndex, columnId, value) =>
-        console.log(rowIndex, columnId, value)
-      }
+      onCellValueChange={handleCellEdit}
     />
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <App />
   </React.StrictMode>
 );

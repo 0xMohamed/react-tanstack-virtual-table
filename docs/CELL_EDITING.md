@@ -14,7 +14,7 @@ Set `readonly={false}` to enable cell editing:
   columns={columns}
   height={400}
   readonly={false}
-  onCellEdit={(rowIndex, columnId, value) => {
+  onCellValueChange={(rowIndex, columnId, value) => {
     console.log(`Row ${rowIndex}, Column ${columnId}: ${value}`);
   }}
 />
@@ -22,7 +22,7 @@ Set `readonly={false}` to enable cell editing:
 
 ### Handle Cell Edits
 
-The `onCellEdit` callback receives three parameters:
+The `onCellValueChange` callback receives three parameters:
 
 - `rowIndex`: The zero-based index of the row
 - `columnId`: The ID of the column (from `accessorKey` or `id`)
@@ -95,7 +95,7 @@ function EditableProductTable() {
       columns={columns}
       height={400}
       readonly={false}
-      onCellEdit={handleCellEdit}
+      onCellValueChange={handleCellEdit}
     />
   );
 }
@@ -114,6 +114,7 @@ function EditableProductTable() {
 ### Edit Mode
 
 When a cell enters edit mode:
+
 - A textarea appears over the cell
 - The cell value is pre-filled
 - The textarea is automatically focused
@@ -121,7 +122,7 @@ When a cell enters edit mode:
 
 ### Type Conversion
 
-The `onCellEdit` callback always receives a **string** value. You need to convert it to the appropriate type:
+The `onCellValueChange` callback always receives a **string** value. You need to convert it to the appropriate type:
 
 ```tsx
 const handleCellEdit = (rowIndex: number, columnId: string, value: string) => {
@@ -131,7 +132,7 @@ const handleCellEdit = (rowIndex: number, columnId: string, value: string) => {
 
     // Type conversion based on column
     let convertedValue: any = value;
-    
+
     if (columnId === "price" || columnId === "amount") {
       convertedValue = parseFloat(value) || 0;
     } else if (columnId === "quantity" || columnId === "id") {
@@ -300,9 +301,7 @@ const columns: ColumnDef<Product>[] = [
       }
 
       return (
-        <div onDoubleClick={() => setIsEditing(true)}>
-          ${info.getValue()}
-        </div>
+        <div onDoubleClick={() => setIsEditing(true)}>${info.getValue()}</div>
       );
     },
   },
@@ -350,4 +349,3 @@ newData[rowIndex] = { ...newData[rowIndex], price: value };
 // ✅ Correct - converting to number
 newData[rowIndex] = { ...newData[rowIndex], price: parseFloat(value) };
 ```
-

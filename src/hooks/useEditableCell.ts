@@ -26,25 +26,25 @@ export interface FocusRingStyle {
 
 export interface UseEditableCellOptions {
   readonly?: boolean;
-  onCellEdit?: (rowIndex: number, columnId: string, value: string) => void;
+  onCellValueChange?: (
+    rowIndex: number,
+    columnId: string,
+    value: string
+  ) => void;
   containerRef: React.RefObject<HTMLDivElement | null>;
   virtualItemsKey?: string; // Stable key from virtual items to trigger updates
 }
 
 export function useEditableCell({
   readonly = false,
-  onCellEdit,
+  onCellValueChange,
   containerRef,
   virtualItemsKey,
 }: UseEditableCellOptions) {
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
   const [editableCell, setEditableCell] = useState<EditableCell | null>(null);
-  const selectedCellElementRef = useRef<HTMLTableCellElement | null>(
-    null
-  ) as MutableRefObject<HTMLTableCellElement | null>;
-  const editableCellElementRef = useRef<HTMLTableCellElement | null>(
-    null
-  ) as MutableRefObject<HTMLTableCellElement | null>;
+  const selectedCellElementRef = useRef<HTMLTableCellElement | null>(null);
+  const editableCellElementRef = useRef<HTMLTableCellElement | null>(null);
   const [focusRingStyle, setFocusRingStyle] = useState<FocusRingStyle>({
     top: 0,
     left: 0,
@@ -146,22 +146,22 @@ export function useEditableCell({
     return () => window.removeEventListener("resize", handleResize);
   }, [selectedCell, editableCell, updateFocusRingPosition]);
 
-  // Click outside listener to close selection and editing
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setSelectedCell(null);
-        setEditableCell(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [containerRef]);
+  // // Click outside listener to close selection and editing
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     if (
+  //       containerRef.current &&
+  //       !containerRef.current.contains(event.target as Node)
+  //     ) {
+  //       setSelectedCell(null);
+  //       setEditableCell(null);
+  //     }
+  //   };
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [containerRef]);
 
   // Handle single click (selection only)
   const handleCellClick = useCallback(
@@ -190,11 +190,15 @@ export function useEditableCell({
     [readonly]
   );
 
-  const handleCellEdit = useCallback(
+  const commitCellEdit = useCallback(
     (rowIndex: number, columnId: string, value: string) => {
-      onCellEdit?.(rowIndex, columnId, value);
+      onCellValueChange?.(rowIndex, columnId, value);
+
+      // Close edit mode after commit (Handsontable behavior)
+      setEditableCell(null);
+      setSelectedCell(null);
     },
-    [onCellEdit]
+    [onCellValueChange]
   );
 
   return {
@@ -208,6 +212,6 @@ export function useEditableCell({
     updateFocusRingPosition,
     handleCellClick,
     handleCellDoubleClick,
-    handleCellEdit,
+    commitCellEdit,
   };
 }

@@ -112,7 +112,7 @@ function App() {
   columns={columns}
   height={400}
   readonly={false}
-  onCellEdit={(rowIndex, columnId, value) => {
+  onCellValueChange={(rowIndex, columnId, value) => {
     console.log(`Row ${rowIndex}, Column ${columnId}: ${value}`);
     // Update your data here
   }}

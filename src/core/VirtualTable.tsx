@@ -27,7 +27,11 @@ export interface VirtualTableProps<TData extends RowData> {
   estimateRowHeight?: number;
   className?: string;
   style?: React.CSSProperties;
-  onCellEdit?: (rowIndex: number, columnId: string, value: string) => void;
+  onCellValueChange?: (
+    rowIndex: number,
+    columnId: string,
+    value: string
+  ) => void;
   readonly?: boolean;
   showRowHeader?: boolean;
   rowHeaderWidth?: number;
@@ -49,7 +53,7 @@ export function VirtualTable<TData extends RowData>({
   estimateRowHeight = 40,
   className,
   style,
-  onCellEdit,
+  onCellValueChange,
   readonly = false,
   showRowHeader = true,
   showColumnHeader = true,
@@ -122,10 +126,10 @@ export function VirtualTable<TData extends RowData>({
     focusRingStyle,
     handleCellClick,
     handleCellDoubleClick,
-    handleCellEdit,
+    commitCellEdit,
   } = useEditableCell({
     readonly,
-    onCellEdit,
+    onCellValueChange,
     containerRef: tableContainerRef,
     virtualItemsKey, // Pass stable key instead of array
   });
@@ -203,7 +207,7 @@ export function VirtualTable<TData extends RowData>({
           editableCellElementRef={editableCellElementRef}
           onCellClick={handleCellClick}
           onCellDoubleClick={handleCellDoubleClick}
-          onCellEdit={handleCellEdit}
+          commitCellEdit={commitCellEdit}
         />
       </table>
 

@@ -42,13 +42,7 @@ const columns: ColumnDef<Person>[] = [
 
 // Use the component
 function App() {
-  return (
-    <VirtualTable
-      data={data}
-      columns={columns}
-      height={400}
-    />
-  );
+  return <VirtualTable data={data} columns={columns} height={400} />;
 }
 ```
 
@@ -102,11 +96,7 @@ const columns: ColumnDef<Person>[] = [
 ### Step 5: Render the Table
 
 ```tsx
-<VirtualTable
-  data={data}
-  columns={columns}
-  height={400}
-/>
+<VirtualTable data={data} columns={columns} height={400} />
 ```
 
 ## Common Patterns
@@ -121,7 +111,7 @@ const [tableData, setTableData] = useState(data);
   columns={columns}
   height={400}
   readonly={false}
-  onCellEdit={(rowIndex, columnId, value) => {
+  onCellValueChange={(rowIndex, columnId, value) => {
     // Update your data
     const newData = [...tableData];
     newData[rowIndex] = {
@@ -130,7 +120,7 @@ const [tableData, setTableData] = useState(data);
     };
     setTableData(newData);
   }}
-/>
+/>;
 ```
 
 ### With Custom Styling
@@ -148,12 +138,7 @@ const [tableData, setTableData] = useState(data);
 ### With Theme
 
 ```tsx
-<VirtualTable
-  data={data}
-  columns={columns}
-  height={400}
-  theme="dark"
-/>
+<VirtualTable data={data} columns={columns} height={400} theme="dark" />
 ```
 
 ## Next Steps
@@ -161,4 +146,3 @@ const [tableData, setTableData] = useState(data);
 - Learn about [Cell Editing](./CELL_EDITING.md)
 - Explore [Styling Options](./STYLING.md)
 - Check the [API Reference](./API.md)
-

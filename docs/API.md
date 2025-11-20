@@ -21,7 +21,7 @@ Complete reference for all props, types, and methods.
   [
     { header: "Name", accessorKey: "name" },
     { header: "Age", accessorKey: "age" },
-  ]
+  ];
   ```
 
 #### `height`
@@ -50,7 +50,7 @@ Complete reference for all props, types, and methods.
 - **Description**: Inline styles for the table container
 - **Example**: `style={{ border: "2px solid blue" }}`
 
-#### `onCellEdit`
+#### `onCellValueChange`
 
 - **Type**: `(rowIndex: number, columnId: string, value: string) => void`
 - **Description**: Callback fired when a cell is edited
@@ -60,7 +60,7 @@ Complete reference for all props, types, and methods.
   - `value`: New string value from the cell
 - **Example**:
   ```tsx
-  onCellEdit={(rowIndex, columnId, value) => {
+  onCellValueChange={(rowIndex, columnId, value) => {
     console.log(`Row ${rowIndex}, Column ${columnId}: ${value}`);
   }}
   ```
@@ -150,7 +150,11 @@ interface VirtualTableProps<TData extends RowData> {
   estimateRowHeight?: number;
   className?: string;
   style?: React.CSSProperties;
-  onCellEdit?: (rowIndex: number, columnId: string, value: string) => void;
+  onCellValueChange?: (
+    rowIndex: number,
+    columnId: string,
+    value: string
+  ) => void;
   readonly?: boolean;
   showRowHeader?: boolean;
   rowHeaderWidth?: number;
@@ -192,6 +196,7 @@ const { table, rowVirtualizer, parentRef } = useVirtualTable({
 ```
 
 **Returns**:
+
 - `table`: TanStack Table instance
 - `rowVirtualizer`: TanStack Virtual row virtualizer
 - `parentRef`: Ref for the scrollable container
@@ -215,7 +220,7 @@ const {
   handleCellEdit,
 } = useEditableCell({
   readonly?: boolean;
-  onCellEdit?: (rowIndex: number, columnId: string, value: string) => void;
+  onCellValueChange?: (rowIndex: number, columnId: string, value: string) => void;
   containerRef: React.RefObject<HTMLDivElement | null>;
   virtualItems?: unknown[];
 });
@@ -370,17 +375,17 @@ The library uses the following CSS classes that you can override:
 
 ## Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| `Arrow Up` | Move to cell above |
-| `Arrow Down` | Move to cell below |
-| `Arrow Left` | Move to cell on left |
-| `Arrow Right` | Move to cell on right |
-| `Tab` | Move to next cell (wraps to next row) |
+| Key           | Action                                        |
+| ------------- | --------------------------------------------- |
+| `Arrow Up`    | Move to cell above                            |
+| `Arrow Down`  | Move to cell below                            |
+| `Arrow Left`  | Move to cell on left                          |
+| `Arrow Right` | Move to cell on right                         |
+| `Tab`         | Move to next cell (wraps to next row)         |
 | `Shift + Tab` | Move to previous cell (wraps to previous row) |
-| `Enter` | Enter edit mode for selected cell |
-| `F2` | Enter edit mode for selected cell |
-| `Escape` | Exit edit mode (keeps selection) |
+| `Enter`       | Enter edit mode for selected cell             |
+| `F2`          | Enter edit mode for selected cell             |
+| `Escape`      | Exit edit mode (keeps selection)              |
 
 ## Events
 
@@ -397,7 +402,7 @@ The library uses the following CSS classes that you can override:
 ### Cell Edit
 
 - **Trigger**: Value change in edit mode
-- **Callback**: `onCellEdit(rowIndex, columnId, value)`
+- **Callback**: `onCellValueChange(rowIndex, columnId, value)`
 
 ### Column Header Click
 
@@ -409,6 +414,5 @@ The library uses the following CSS classes that you can override:
 1. **Memoize large datasets**: Use `useMemo` for data arrays
 2. **Stable column definitions**: Define columns outside component or use `useMemo`
 3. **Type safety**: Use TypeScript and define your data types
-4. **Immutable updates**: Always update state immutably in `onCellEdit`
+4. **Immutable updates**: Always update state immutably in `onCellValueChange`
 5. **Appropriate row heights**: Set `estimateRowHeight` close to actual height
-

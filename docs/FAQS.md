@@ -42,7 +42,7 @@ const largeData = Array.from({ length: 10000 }, (_, i) => ({
   name: `Item ${i}`,
 }));
 
-<VirtualTable data={largeData} columns={columns} height={600} />
+<VirtualTable data={largeData} columns={columns} height={600} />;
 ```
 
 ### Q: Can I use computed/derived columns?
@@ -88,20 +88,20 @@ A: Yes, columns are sortable by default. Click the header to sort. To disable:
 
 ### Q: How do I enable cell editing?
 
-A: Set `readonly={false}` and provide an `onCellEdit` callback:
+A: Set `readonly={false}` and provide an `onCellValueChange` callback:
 
 ```tsx
 <VirtualTable
   data={data}
   columns={columns}
   readonly={false}
-  onCellEdit={(rowIndex, columnId, value) => {
+  onCellValueChange={(rowIndex, columnId, value) => {
     // Update your data
   }}
 />
 ```
 
-### Q: The `onCellEdit` callback receives strings. How do I handle numbers?
+### Q: The `onCellValueChange` callback receives strings. How do I handle numbers?
 
 A: Convert the string to the appropriate type:
 
@@ -111,9 +111,7 @@ const handleCellEdit = (rowIndex, columnId, value) => {
     const newData = [...prev];
     newData[rowIndex] = {
       ...newData[rowIndex],
-      [columnId]: columnId === "price" 
-        ? parseFloat(value) 
-        : value,
+      [columnId]: columnId === "price" ? parseFloat(value) : value,
     };
     return newData;
   });
@@ -122,7 +120,7 @@ const handleCellEdit = (rowIndex, columnId, value) => {
 
 ### Q: How do I make specific columns read-only?
 
-A: You can handle this in your `onCellEdit` callback:
+A: You can handle this in your `onCellValueChange` callback:
 
 ```tsx
 const handleCellEdit = (rowIndex, columnId, value) => {
@@ -136,7 +134,7 @@ const handleCellEdit = (rowIndex, columnId, value) => {
 
 ### Q: Can I validate cell edits?
 
-A: Yes, add validation in your `onCellEdit` callback:
+A: Yes, add validation in your `onCellValueChange` callback:
 
 ```tsx
 const handleCellEdit = (rowIndex, columnId, value) => {
@@ -205,6 +203,7 @@ A: Set the `estimateRowHeight` prop:
 ### Q: How do I navigate with keyboard?
 
 A: The table supports full keyboard navigation:
+
 - **Arrow keys**: Move between cells
 - **Tab**: Next cell
 - **Shift+Tab**: Previous cell
@@ -223,7 +222,8 @@ A: Yes! The table uses row virtualization, so it only renders visible rows. Perf
 
 ### Q: How do I optimize performance?
 
-A: 
+A:
+
 1. Set `estimateRowHeight` close to actual row height
 2. Memoize your data and columns
 3. Avoid complex cell renderers for large datasets
@@ -232,6 +232,7 @@ A:
 ### Q: Why is scrolling slow?
 
 A: Check:
+
 1. Is `estimateRowHeight` set correctly?
 2. Are cell renderers too complex?
 3. Are you updating state on every scroll event?
@@ -279,6 +280,7 @@ interface Person extends RowData {
 ### Q: Columns aren't showing
 
 A: Check:
+
 1. Are your columns defined correctly?
 2. Do `accessorKey` values match your data keys?
 3. Is your data array not empty?
@@ -286,6 +288,7 @@ A: Check:
 ### Q: Focus ring isn't appearing
 
 A: Make sure:
+
 1. You've clicked on a cell
 2. The table container has focus
 3. CSS files are imported
@@ -336,4 +339,3 @@ A: Yes! See the [Examples](./EXAMPLES.md) for integration patterns.
 - Check the [API Reference](./API.md) for detailed prop descriptions
 - Review the [Examples](./EXAMPLES.md) for common patterns
 - Open an issue on GitHub for bugs or feature requests
-

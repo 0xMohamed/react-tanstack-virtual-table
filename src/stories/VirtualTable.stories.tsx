@@ -167,7 +167,7 @@ export const Editable: Story = {
         {...args}
         data={data}
         readonly={false}
-        onCellEdit={handleCellEdit}
+        onCellValueChange={handleCellEdit}
       />
     );
   },
@@ -420,7 +420,7 @@ export const ProductTable: Story = {
         columns={productColumns}
         height={500}
         readonly={false}
-        onCellEdit={handleCellEdit}
+        onCellValueChange={handleCellEdit}
       />
     );
   },
@@ -499,7 +499,7 @@ export const AllFeatures: Story = {
         columns={personColumns}
         height={600}
         readonly={false}
-        onCellEdit={handleCellEdit}
+        onCellValueChange={handleCellEdit}
         autoFitColumnWidth={true}
         autoFitOptions={{
           minWidth: 100,

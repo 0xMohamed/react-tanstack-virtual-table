@@ -22,7 +22,7 @@ interface TableBodyProps<TData extends RowData> {
     columnId: string,
     isRowHeader: boolean
   ) => void;
-  onCellEdit: (rowIndex: number, columnId: string, value: string) => void;
+  commitCellEdit: (rowIndex: number, columnId: string, value: string) => void;
 }
 
 export function TableBody<TData extends RowData>({
@@ -35,7 +35,7 @@ export function TableBody<TData extends RowData>({
   editableCellElementRef,
   onCellClick,
   onCellDoubleClick,
-  onCellEdit,
+  commitCellEdit,
 }: TableBodyProps<TData>) {
   const virtualItems = rowVirtualizer.getVirtualItems();
 
@@ -45,7 +45,7 @@ export function TableBody<TData extends RowData>({
   // but doesn't cause re-renders when the virtualizer updates
   const measureElementRef = React.useRef(rowVirtualizer.measureElement);
   measureElementRef.current = rowVirtualizer.measureElement;
-  
+
   const measureElement = useCallback(
     (node: HTMLTableRowElement | null) => {
       measureElementRef.current(node);
@@ -74,7 +74,7 @@ export function TableBody<TData extends RowData>({
             editableCellElementRef={editableCellElementRef}
             onCellClick={onCellClick}
             onCellDoubleClick={onCellDoubleClick}
-            onCellEdit={onCellEdit}
+            commitCellEdit={commitCellEdit}
             measureElement={measureElement}
           />
         );

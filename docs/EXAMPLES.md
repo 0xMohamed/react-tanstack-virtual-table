@@ -70,14 +70,17 @@ function EmployeeTable() {
     { header: "Salary", accessorKey: "salary" },
   ];
 
-  const handleCellEdit = (rowIndex: number, columnId: string, value: string) => {
+  const handleCellEdit = (
+    rowIndex: number,
+    columnId: string,
+    value: string
+  ) => {
     setEmployees((prev) => {
       const newData = [...prev];
       newData[rowIndex] = {
         ...newData[rowIndex],
-        [columnId]: columnId === "id" || columnId === "salary" 
-          ? Number(value) 
-          : value,
+        [columnId]:
+          columnId === "id" || columnId === "salary" ? Number(value) : value,
       };
       return newData;
     });
@@ -89,7 +92,7 @@ function EmployeeTable() {
       columns={columns}
       height={400}
       readonly={false}
-      onCellEdit={handleCellEdit}
+      onCellValueChange={handleCellEdit}
     />
   );
 }
@@ -114,7 +117,7 @@ function LargeDataTable() {
     }));
   }, []);
 
-  const columns: ColumnDef<typeof data[0]>[] = [
+  const columns: ColumnDef<(typeof data)[0]>[] = [
     { header: "ID", accessorKey: "id" },
     { header: "Name", accessorKey: "name" },
     { header: "Value", accessorKey: "value" },
@@ -147,7 +150,13 @@ type Order = {
 };
 
 const orders: Order[] = [
-  { id: 1, customer: "John", amount: 150, status: "completed", date: "2024-01-15" },
+  {
+    id: 1,
+    customer: "John",
+    amount: 150,
+    status: "completed",
+    date: "2024-01-15",
+  },
   // ... more orders
 ];
 
@@ -170,9 +179,7 @@ const columns: ColumnDef<Order>[] = [
         cancelled: "red",
       };
       return (
-        <span style={{ color: colors[status] }}>
-          {status.toUpperCase()}
-        </span>
+        <span style={{ color: colors[status] }}>{status.toUpperCase()}</span>
       );
     },
   },
@@ -180,13 +187,7 @@ const columns: ColumnDef<Order>[] = [
 ];
 
 function OrderTable() {
-  return (
-    <VirtualTable
-      data={orders}
-      columns={columns}
-      height={500}
-    />
-  );
+  return <VirtualTable data={orders} columns={columns} height={500} />;
 }
 ```
 
@@ -209,12 +210,7 @@ function OrderTable() {
 ### Dark Theme
 
 ```tsx
-<VirtualTable
-  data={data}
-  columns={columns}
-  height={500}
-  theme="dark"
-/>
+<VirtualTable data={data} columns={columns} height={500} theme="dark" />
 ```
 
 ### Custom Theme Override
@@ -283,13 +279,7 @@ function DataTable() {
 
   if (isLoading) return <div>Loading...</div>;
 
-  return (
-    <VirtualTable
-      data={data || []}
-      columns={columns}
-      height={500}
-    />
-  );
+  return <VirtualTable data={data || []} columns={columns} height={500} />;
 }
 ```
 
@@ -302,7 +292,11 @@ import { VirtualTable } from "react-tanstack-virtual-table";
 function FormTable() {
   const [formData, setFormData] = useState(initialData);
 
-  const handleCellEdit = (rowIndex: number, columnId: string, value: string) => {
+  const handleCellEdit = (
+    rowIndex: number,
+    columnId: string,
+    value: string
+  ) => {
     setFormData((prev) => {
       const newData = [...prev];
       newData[rowIndex] = { ...newData[rowIndex], [columnId]: value };
@@ -321,7 +315,7 @@ function FormTable() {
         data={formData}
         columns={columns}
         height={400}
-        onCellEdit={handleCellEdit}
+        onCellValueChange={handleCellEdit}
       />
       <button onClick={handleSubmit}>Submit</button>
     </div>
@@ -336,4 +330,3 @@ function FormTable() {
 3. **Handle Cell Edits Properly**: Always update your state immutably
 4. **Use Appropriate Row Heights**: Set `estimateRowHeight` close to actual row height for better performance
 5. **Leverage Virtualization**: The table handles large datasets efficiently, don't paginate unnecessarily
-
