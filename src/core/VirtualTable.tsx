@@ -1,5 +1,11 @@
-import React, { useRef, useMemo, useCallback } from "react";
-import { ColumnDef, RowData } from "@tanstack/react-table";
+import React, {
+  useRef,
+  useMemo,
+  useCallback,
+  useLayoutEffect,
+  useState,
+} from "react";
+import { ColumnDef, ColumnSizingState, RowData } from "@tanstack/react-table";
 import { useVirtualTable } from "../hooks/useVirtualTable";
 import { useEditableCell } from "../hooks/useEditableCell";
 import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
@@ -73,18 +79,28 @@ export function VirtualTable<TData extends RowData>({
     [showRowHeader, columns, rowHeaderWidth]
   );
 
+  const preMeasuredColumnSizing = useAutoColumnSize({
+    enabled: autoFitColumnWidth,
+    columns: columnsWithRowHeader,
+    data,
+    ...autoFitOptions,
+  });
+
+  const [columnSizingState, setColumnSizingState] = useState<ColumnSizingState>(
+    () => preMeasuredColumnSizing ?? {}
+  );
+
+  useLayoutEffect(() => {
+    if (!autoFitColumnWidth || !preMeasuredColumnSizing) return;
+    setColumnSizingState(preMeasuredColumnSizing);
+  }, [autoFitColumnWidth, preMeasuredColumnSizing]);
+
   const { table, rowVirtualizer, parentRef } = useVirtualTable({
     data,
     columns: columnsWithRowHeader,
     estimateRowHeight,
-  });
-
-  // Auto column sizing
-  useAutoColumnSize({
-    enabled: autoFitColumnWidth,
-    table,
-    data,
-    ...autoFitOptions,
+    columnSizing: columnSizingState,
+    onColumnSizingChange: autoFitColumnWidth ? undefined : setColumnSizingState,
   });
 
   // Editable cell management
@@ -95,7 +111,7 @@ export function VirtualTable<TData extends RowData>({
     () => virtualItems.map((item) => `${item.index}-${item.start}`).join(","),
     [virtualItems]
   );
-  
+
   const {
     selectedCell,
     setSelectedCell,
