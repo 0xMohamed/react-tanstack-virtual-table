@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write # Required for pushing tags + gh-pages
-      pages: write # For deploying Storybook
-      id-token: write # For npm publish if using provenance
+      contents: write
+      pages: write
+      id-token: write
 
     steps:
       # ------------------------------
@@ -22,7 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Needed for tags
+          fetch-depth: 0
 
       # ------------------------------
       # 2. Setup Node
@@ -40,84 +40,53 @@ jobs:
         run: npm ci
 
       # ------------------------------
-      # 4. Run Type Checking / Lint
-      # ------------------------------
-      # - name: Type Check
-      #   run: npm run type-check --if-present
-
-      # - name: Lint
-      #   run: npm run lint --if-present
-
-      # ------------------------------
-      # 5. Build Library
+      # 4. Build Library
       # ------------------------------
       - name: Build library
         run: npm run build
 
       # ------------------------------
-      # 6. Build Storybook
+      # 5. Build Storybook
       # ------------------------------
       - name: Build Storybook
         run: npm run build-storybook --if-present
 
       # ------------------------------
-      # 7. Detect Version Change
+      # 6. Bump version if needed
       # ------------------------------
-      - name: Detect version change
-        id: version_check
+      - name: Bump patch version
+        id: bump_version
         run: |
-          CURRENT_VERSION=$(git tag --sort=-v:refname | head -n1 | sed 's/v//')
-          CURRENT_VERSION=${CURRENT_VERSION:-0.0.0}
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-
-          echo "current_tag_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
-
-          if [ "$CURRENT_VERSION" = "$PACKAGE_VERSION" ]; then
-            echo "no_release=true" >> $GITHUB_OUTPUT
-          else
-            echo "no_release=false" >> $GITHUB_OUTPUT
-          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          npm version patch -m "chore: bump version to %s"
+          echo "package_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          git push origin main --follow-tags
 
       # ------------------------------
-      # 8. Generate Changelog
+      # 7. Generate Changelog
       # ------------------------------
       - name: Generate Changelog
-        if: steps.version_check.outputs.no_release == 'false'
         run: |
           npx auto-changelog -p
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "chore: update changelog for v${{ steps.version_check.outputs.package_version }}"
+          git commit -m "chore: update changelog for v${{ steps.bump_version.outputs.package_version }}"
           git push
 
       # ------------------------------
-      # 9. Publish to npm ONLY if version changed
+      # 8. Publish to npm
       # ------------------------------
       - name: Publish to npm
-        if: steps.version_check.outputs.no_release == 'false'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
 
       # ------------------------------
-      # 10. Create Git Tag
-      # ------------------------------
-      - name: Create and push git tag
-        if: steps.version_check.outputs.no_release == 'false'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          TAG="v${{ steps.version_check.outputs.package_version }}"
-          git tag $TAG
-          git push origin $TAG
-
-      # ------------------------------
-      # 11. Deploy Storybook to gh-pages
+      # 9. Deploy Storybook
       # ------------------------------
       - name: Upload Storybook to GitHub Pages
-        if: steps.version_check.outputs.no_release == 'false'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -125,7 +94,7 @@ jobs:
           publish_dir: storybook-static
 
       # ------------------------------
-      # 12. Job Complete
+      # 10. Done
       # ------------------------------
       - name: Done
         run: echo "Release pipeline completed!"
