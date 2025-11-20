@@ -1,6 +1,5 @@
 import React from "react";
 import { flexRender, Cell, RowData } from "@tanstack/react-table";
-import { EditableCell, SelectedCell } from "../hooks/useEditableCell";
 
 interface TableCellProps<TData extends RowData> {
   cell: Cell<TData, unknown>;
@@ -8,12 +7,10 @@ interface TableCellProps<TData extends RowData> {
   isActiveEditable: boolean;
   isActiveRow: boolean;
   isSelected: boolean;
-  selectedCell: SelectedCell | null;
-  editableCell: EditableCell | null;
   readonly: boolean;
   virtualRowSize: number;
-  selectedCellElementRef: React.RefObject<HTMLTableCellElement | null>;
-  editableCellElementRef: React.RefObject<HTMLTableCellElement | null>;
+  selectedCellElementRef: React.MutableRefObject<HTMLTableCellElement | null>;
+  editableCellElementRef: React.MutableRefObject<HTMLTableCellElement | null>;
   onClick: () => void;
   onDoubleClick: () => void;
   onCellEdit: (value: string) => void;
@@ -25,8 +22,6 @@ export function TableCell<TData extends RowData>({
   isActiveEditable,
   isActiveRow,
   isSelected,
-  selectedCell,
-  editableCell,
   readonly,
   virtualRowSize,
   selectedCellElementRef,
@@ -49,14 +44,10 @@ export function TableCell<TData extends RowData>({
       key={cell.id}
       ref={(node) => {
         if (isSelected) {
-          (
-            selectedCellElementRef as React.MutableRefObject<HTMLTableCellElement | null>
-          ).current = node;
+          selectedCellElementRef.current = node;
         }
         if (isActiveEditable) {
-          (
-            editableCellElementRef as React.MutableRefObject<HTMLTableCellElement | null>
-          ).current = node;
+          editableCellElementRef.current = node;
         }
       }}
       className={cellClasses}

@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useCallback } from "react";
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import { useVirtualTable } from "../hooks/useVirtualTable";
 import { useEditableCell } from "../hooks/useEditableCell";
@@ -88,7 +88,14 @@ export function VirtualTable<TData extends RowData>({
   });
 
   // Editable cell management
+  // Get virtual items - they change when scrolling, so we need to track them
   const virtualItems = rowVirtualizer.getVirtualItems();
+  // Create a stable key from virtual items to track actual changes
+  const virtualItemsKey = useMemo(
+    () => virtualItems.map((item) => `${item.index}-${item.start}`).join(","),
+    [virtualItems]
+  );
+  
   const {
     selectedCell,
     setSelectedCell,
@@ -104,7 +111,7 @@ export function VirtualTable<TData extends RowData>({
     readonly,
     onCellEdit,
     containerRef: tableContainerRef,
-    virtualItems,
+    virtualItemsKey, // Pass stable key instead of array
   });
 
   // Keyboard navigation
@@ -120,11 +127,13 @@ export function VirtualTable<TData extends RowData>({
     selectedCellElementRef,
   });
 
-  // Merge refs
-  const containerRefCallback = (el: HTMLDivElement | null) => {
+  // Merge refs using useCallback to avoid recreating the function
+  // Note: refs are stable and don't need to be in dependencies
+  const containerRefCallback = useCallback((el: HTMLDivElement | null) => {
     parentRef.current = el;
     tableContainerRef.current = el;
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Apply theme and theme overrides
   const containerStyle: React.CSSProperties = useMemo(() => {

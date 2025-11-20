@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Table, RowData } from "@tanstack/react-table";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { EditableCell, SelectedCell } from "../hooks/useEditableCell";
@@ -10,8 +10,8 @@ interface TableBodyProps<TData extends RowData> {
   selectedCell: SelectedCell | null;
   editableCell: EditableCell | null;
   readonly: boolean;
-  selectedCellElementRef: React.RefObject<HTMLTableCellElement | null>;
-  editableCellElementRef: React.RefObject<HTMLTableCellElement | null>;
+  selectedCellElementRef: React.MutableRefObject<HTMLTableCellElement | null>;
+  editableCellElementRef: React.MutableRefObject<HTMLTableCellElement | null>;
   onCellClick: (
     rowIndex: number,
     columnId: string,
@@ -39,6 +39,20 @@ export function TableBody<TData extends RowData>({
 }: TableBodyProps<TData>) {
   const virtualItems = rowVirtualizer.getVirtualItems();
 
+  // Memoize measureElement to prevent infinite loops
+  // This function must be stable across renders to avoid triggering re-measurements
+  // Use a ref to store the measureElement function to ensure it's always the latest
+  // but doesn't cause re-renders when the virtualizer updates
+  const measureElementRef = React.useRef(rowVirtualizer.measureElement);
+  measureElementRef.current = rowVirtualizer.measureElement;
+  
+  const measureElement = useCallback(
+    (node: HTMLTableRowElement | null) => {
+      measureElementRef.current(node);
+    },
+    [] // Empty deps - ref ensures we always use the latest function
+  );
+
   return (
     <tbody
       className="vt-tbody"
@@ -61,7 +75,7 @@ export function TableBody<TData extends RowData>({
             onCellClick={onCellClick}
             onCellDoubleClick={onCellDoubleClick}
             onCellEdit={onCellEdit}
-            measureElement={(node) => rowVirtualizer.measureElement(node)}
+            measureElement={measureElement}
           />
         );
       })}

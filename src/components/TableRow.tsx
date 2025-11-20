@@ -10,8 +10,8 @@ interface TableRowProps<TData extends RowData> {
   selectedCell: SelectedCell | null;
   editableCell: EditableCell | null;
   readonly: boolean;
-  selectedCellElementRef: React.RefObject<HTMLTableCellElement | null>;
-  editableCellElementRef: React.RefObject<HTMLTableCellElement | null>;
+  selectedCellElementRef: React.MutableRefObject<HTMLTableCellElement | null>;
+  editableCellElementRef: React.MutableRefObject<HTMLTableCellElement | null>;
   onCellClick: (
     rowIndex: number,
     columnId: string,
@@ -69,8 +69,6 @@ export function TableRow<TData extends RowData>({
             isActiveEditable={isActiveEditable}
             isActiveRow={isActiveRow}
             isSelected={isSelected}
-            selectedCell={selectedCell}
-            editableCell={editableCell}
             readonly={readonly}
             virtualRowSize={virtualRow.size}
             selectedCellElementRef={selectedCellElementRef}

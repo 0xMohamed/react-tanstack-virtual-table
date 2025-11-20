@@ -1,7 +1,7 @@
 /**
  * Creates a debounced function that delays invocation until after wait milliseconds
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -20,7 +20,7 @@ export function debounce<T extends (...args: any[]) => any>(
 /**
  * Creates a throttled function that invokes func at most once per wait milliseconds
  */
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

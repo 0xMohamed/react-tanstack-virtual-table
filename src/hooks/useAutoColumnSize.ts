@@ -1,6 +1,6 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import { Table, ColumnDef, RowData } from "@tanstack/react-table";
-import { measureTextWidthDOM, measureColumnWidth } from "../utils/measureText";
+import { measureColumnWidth } from "../utils/measureText";
 import { debounce } from "../utils/debounce";
 
 export interface UseAutoColumnSizeOptions<TData extends RowData> {
@@ -42,24 +42,46 @@ export function useAutoColumnSize<TData extends RowData>({
       // Get header text
       const headerText =
         typeof columnDef.header === "function"
-          ? String(columnDef.header({} as any))
+          ? String(columnDef.header({} as Parameters<NonNullable<typeof columnDef.header>>[0]))
           : String(columnDef.header || "");
 
       // Get all cell values for this column
-      const cellValues = data.map((row) => {
-        const accessorKey = (columnDef as any).accessorKey;
-        if (accessorKey) {
-          return (row as any)[accessorKey];
+      const cellValues: (string | number | null | undefined)[] = data.map((row) => {
+        // Type guard for accessorKey
+        const columnDefWithAccessor = columnDef as ColumnDef<TData> & { accessorKey?: keyof TData };
+        if (columnDefWithAccessor.accessorKey) {
+          const value = row[columnDefWithAccessor.accessorKey];
+          // Convert to string or number for measurement
+          if (value === null || value === undefined) {
+            return "";
+          }
+          if (typeof value === "string" || typeof value === "number") {
+            return value;
+          }
+          return String(value);
         }
-        if (columnDef.cell) {
+        if (columnDef.cell && typeof columnDef.cell === "function") {
           // Try to render cell to get value
-          const cellValue = (columnDef.cell as any)({
-            getValue: () => (row as any)[accessorKey],
+          // Create a minimal cell context for measurement
+          const cellContext = {
+            getValue: () => {
+              // Try to get value from accessorKey if available
+              if (columnDefWithAccessor.accessorKey) {
+                return row[columnDefWithAccessor.accessorKey];
+              }
+              return undefined;
+            },
             row: { original: row },
-          } as any);
-          return typeof cellValue === "string"
-            ? cellValue
-            : String(cellValue || "");
+          } as Parameters<typeof columnDef.cell>[0];
+          
+          const cellValue = columnDef.cell(cellContext);
+          if (cellValue === null || cellValue === undefined) {
+            return "";
+          }
+          if (typeof cellValue === "string" || typeof cellValue === "number") {
+            return cellValue;
+          }
+          return String(cellValue);
         }
         return "";
       });
@@ -96,16 +118,18 @@ export function useAutoColumnSize<TData extends RowData>({
     });
   }, [enabled, table, measureColumn]);
 
-  // Debounced measure function
-  const debouncedMeasure = useCallback(debounce(measureAllColumns, 100), [
-    measureAllColumns,
-  ]);
+  // Debounced measure function - use useMemo to create stable debounced function
+  const debouncedMeasure = useMemo(
+    () => debounce(measureAllColumns, 100),
+    [measureAllColumns]
+  );
 
   // Measure columns when data or columns change
+  const columnCount = table.getAllColumns().length;
   useEffect(() => {
     if (!enabled) return;
     debouncedMeasure();
-  }, [enabled, data, table.getAllColumns().length, debouncedMeasure]);
+  }, [enabled, data, columnCount, debouncedMeasure]);
 
   // Handle zoom changes
   useEffect(() => {

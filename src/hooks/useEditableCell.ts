@@ -1,4 +1,10 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  MutableRefObject,
+} from "react";
 
 export interface EditableCell {
   rowIndex: number;
@@ -22,19 +28,23 @@ export interface UseEditableCellOptions {
   readonly?: boolean;
   onCellEdit?: (rowIndex: number, columnId: string, value: string) => void;
   containerRef: React.RefObject<HTMLDivElement | null>;
-  virtualItems?: unknown[]; // Virtual items to trigger updates
+  virtualItemsKey?: string; // Stable key from virtual items to trigger updates
 }
 
 export function useEditableCell({
   readonly = false,
   onCellEdit,
   containerRef,
-  virtualItems,
+  virtualItemsKey,
 }: UseEditableCellOptions) {
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
   const [editableCell, setEditableCell] = useState<EditableCell | null>(null);
-  const selectedCellElementRef = useRef<HTMLTableCellElement | null>(null);
-  const editableCellElementRef = useRef<HTMLTableCellElement | null>(null);
+  const selectedCellElementRef = useRef<HTMLTableCellElement | null>(
+    null
+  ) as MutableRefObject<HTMLTableCellElement | null>;
+  const editableCellElementRef = useRef<HTMLTableCellElement | null>(
+    null
+  ) as MutableRefObject<HTMLTableCellElement | null>;
   const [focusRingStyle, setFocusRingStyle] = useState<FocusRingStyle>({
     top: 0,
     left: 0,
@@ -77,22 +87,37 @@ export function useEditableCell({
   }, [selectedCell, editableCell, containerRef]);
 
   // Update focus ring when selectedCell or editableCell changes or virtual items change
+  // Use a ref to track if we're already updating to prevent infinite loops
+  const isUpdatingRef = useRef(false);
+
   useEffect(() => {
     const cellToFollow = selectedCell || editableCell;
     if (!cellToFollow) {
-      setFocusRingStyle((prev) => ({ ...prev, opacity: 0 }));
+      setFocusRingStyle((prev) => {
+        // Only update if opacity is not already 0 to avoid unnecessary re-renders
+        if (prev.opacity === 0) return prev;
+        return { ...prev, opacity: 0 };
+      });
       selectedCellElementRef.current = null;
       editableCellElementRef.current = null;
       return;
     }
 
+    // Prevent concurrent updates
+    if (isUpdatingRef.current) return;
+    isUpdatingRef.current = true;
+
     // Small delay to ensure DOM is updated after state change
     const timeoutId = setTimeout(() => {
       updateFocusRingPosition();
+      isUpdatingRef.current = false;
     }, 0);
 
-    return () => clearTimeout(timeoutId);
-  }, [selectedCell, editableCell, virtualItems, updateFocusRingPosition]);
+    return () => {
+      clearTimeout(timeoutId);
+      isUpdatingRef.current = false;
+    };
+  }, [selectedCell, editableCell, virtualItemsKey, updateFocusRingPosition]);
 
   // Update focus ring on scroll
   useEffect(() => {

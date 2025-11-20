@@ -17,7 +17,8 @@ export interface UseKeyboardNavigationOptions<TData extends RowData> {
   setEditableCell: (cell: EditableCell | null) => void;
   readonly?: boolean;
   containerRef: React.RefObject<HTMLDivElement | null>;
-  selectedCellElementRef: React.RefObject<HTMLTableCellElement | null>;
+  // selectedCellElementRef is kept for future use but not currently used in the hook
+  selectedCellElementRef: React.MutableRefObject<HTMLTableCellElement | null>;
 }
 
 export function useKeyboardNavigation<TData extends RowData>({
@@ -29,7 +30,7 @@ export function useKeyboardNavigation<TData extends RowData>({
   setEditableCell,
   readonly = false,
   containerRef,
-  selectedCellElementRef,
+  selectedCellElementRef: _selectedCellElementRef, // Prefixed with _ to indicate intentionally unused
 }: UseKeyboardNavigationOptions<TData>) {
   const isNavigatingRef = useRef(false);
 
@@ -82,7 +83,6 @@ export function useKeyboardNavigation<TData extends RowData>({
       }, 100);
     },
     [
-      table,
       rowVirtualizer,
       readonly,
       editableCell,

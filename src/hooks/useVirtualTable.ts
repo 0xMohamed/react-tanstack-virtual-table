@@ -6,7 +6,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useRef } from "react";
+import { useRef, MutableRefObject } from "react";
 
 interface UseVirtualTableProps<TData extends RowData> {
   data: TData[];
@@ -19,7 +19,7 @@ export function useVirtualTable<TData extends RowData>({
   columns,
   estimateRowHeight = 40,
 }: UseVirtualTableProps<TData>) {
-  const parentRef = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null) as MutableRefObject<HTMLDivElement | null>;
 
   const table = useReactTable({
     data,
