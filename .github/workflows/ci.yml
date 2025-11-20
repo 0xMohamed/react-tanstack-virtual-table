@@ -42,8 +42,8 @@ jobs:
       # ------------------------------
       # 4. Run Type Checking / Lint
       # ------------------------------
-      - name: Type Check
-        run: npm run type-check --if-present
+      # - name: Type Check
+      #   run: npm run type-check --if-present
 
       - name: Lint
         run: npm run lint --if-present

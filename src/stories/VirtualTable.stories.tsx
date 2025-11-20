@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { VirtualTable } from "../core/VirtualTable";
-import type { ColumnDef, RowData } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 
 // Mock data generators
 const generatePerson = (index: number) => ({
