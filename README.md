@@ -42,6 +42,14 @@ npm install react react-dom @tanstack/react-table @tanstack/react-virtual
 
 ## 🚀 Quick Start
 
+**Important**: Don't forget to import the CSS file! Add this import to your application entry point:
+
+```tsx
+import "react-tanstack-virtual-table/dist/index.css";
+```
+
+Then use the component:
+
 ```tsx
 import { VirtualTable } from "react-tanstack-virtual-table";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -74,13 +82,7 @@ const columns: ColumnDef<Person>[] = [
 ];
 
 function App() {
-  return (
-    <VirtualTable
-      data={data}
-      columns={columns}
-      height={600}
-    />
-  );
+  return <VirtualTable data={data} columns={columns} height={600} />;
 }
 ```
 
@@ -99,11 +101,7 @@ function App() {
 ### Basic Table
 
 ```tsx
-<VirtualTable
-  data={data}
-  columns={columns}
-  height={400}
-/>
+<VirtualTable data={data} columns={columns} height={400} />
 ```
 
 ### Editable Table
@@ -124,12 +122,7 @@ function App() {
 ### Dark Theme
 
 ```tsx
-<VirtualTable
-  data={data}
-  columns={columns}
-  height={400}
-  theme="dark"
-/>
+<VirtualTable data={data} columns={columns} height={400} theme="dark" />
 ```
 
 ### Custom Styling
@@ -188,6 +181,7 @@ The table uses row virtualization to efficiently render large datasets. Only vis
 ### Column Highlighting
 
 When a cell is selected or being edited:
+
 - The corresponding column header is highlighted
 - The row number in the left header is highlighted
 
